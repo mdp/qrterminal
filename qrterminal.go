@@ -6,8 +6,8 @@ import (
 	"code.google.com/p/rsc/qr"
 )
 
-const BLACK = "\033[40m  \033[0m"
-const WHITE = "\033[47m  \033[0m"
+const WHITE = "\033[40m  \033[0m"
+const BLACK = "\033[47m  \033[0m"
 
 // Level - the QR Code's redundancy level
 type Level int
