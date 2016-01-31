@@ -3,7 +3,7 @@ package qrterminal
 import (
 	"io"
 
-	"code.google.com/p/rsc/qr"
+	"github.com/mdp/rsc/qr"
 )
 
 const BLACK = "\033[40m  \033[0m"
