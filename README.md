@@ -15,7 +15,27 @@ import (
     )
 
 func main() {
-  qrterminal.Generate("https://github.com/mdp/go-qrcode/terminal", os.Stdout)
+  qrterminal.Generate("https://github.com/mdp/qrterminal", os.Stdout)
+}
+```
+
+### More complicated
+
+Inverted barcode with medium redundancy
+```go
+import (
+    "github.com/mdp/qrterminal"
+    "os"
+    )
+
+func main() {
+  config := qrterminal.Config{
+      Level: qrterminal.L,
+      Writer: os.Stdout,
+      BlackChar: qrterminal.WHITE,
+      WhiteChar: qrterminal.BLACK,
+  }
+  qrterminal.GenerateWithConfig("https://github.com/mdp/qrterminal", config)
 }
 ```
 
