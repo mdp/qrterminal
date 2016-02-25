@@ -2,7 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/mdp/qrterminal.png)](https://travis-ci.org/mdp/qrterminal)
 
-Pretty simple, I stole this from https://github.com/gtanner/qrcode-terminal
+Pretty simple, I stole this from the NodeJS version at https://github.com/gtanner/qrcode-terminal and turned it into a Golang library.
 
 ## Install
 
