@@ -50,7 +50,7 @@ func GenerateWithConfig(text string, config Config) {
 // Generate a QR Code and write it out to io.Writer
 func Generate(text string, l qr.Level, w io.Writer) {
 	config := Config{
-		Level:     qr.L,
+		Level:     l,
 		Writer:    w,
 		BlackChar: BLACK,
 		WhiteChar: WHITE,
