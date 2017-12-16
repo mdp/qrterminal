@@ -13,8 +13,10 @@ func TestGenerateWithConfig(t *testing.T) {
 	config := Config{
 		Level:     M,
 		Writer:    os.Stdout,
-		BlackChar: WHITE,
-		WhiteChar: BLACK,
+		BlackBlackChar: BLACK_BLACK,
+		WhiteBlackChar: WHITE_BLACK,
+		WhiteWhiteChar: WHITE_WHITE,
+		BlackWhiteChar: BLACK_WHITE,
 	}
 	GenerateWithConfig("https://github.com/mdp/qrterminal", config)
 }
