@@ -109,3 +109,17 @@ func Generate(text string, l qr.Level, w io.Writer) {
 	}
 	GenerateWithConfig(text, config)
 }
+
+// Generate a QR Code with half blocks and write it out to io.Writer
+func GenerateHalfBlock(text string, l qr.Level, w io.Writer) {
+	config := Config{
+		Level:          l,
+		Writer:         w,
+		HalfBlocks:     true,
+		BlackChar:      BLACK_BLACK,
+		WhiteBlackChar: WHITE_BLACK,
+		WhiteChar:      WHITE_WHITE,
+		BlackWhiteChar: BLACK_WHITE,
+	}
+	GenerateWithConfig(text, config)
+}
