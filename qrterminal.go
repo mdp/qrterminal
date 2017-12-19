@@ -3,9 +3,13 @@ package qrterminal
 import (
 	"io"
 
-	"github.com/mdp/rsc/qr"
+	"github.com/rsc/qr"
 )
 
+const WHITE = "\033[47m  \033[0m"
+const BLACK = "\033[40m  \033[0m"
+
+// Use ascii blocks to form the QR Code
 const BLACK_WHITE = "▄"
 const BLACK_BLACK = " "
 const WHITE_BLACK = "▀"
@@ -20,20 +24,41 @@ const L = qr.L
 type Config struct {
 	Level          qr.Level
 	Writer         io.Writer
-	BlackBlackChar string
+	HalfBlocks     bool
+	BlackChar      string
 	BlackWhiteChar string
-	WhiteWhiteChar string
+	WhiteChar      string
 	WhiteBlackChar string
 }
 
-// GenerateWithConfig expects a string to encode and a config
-func GenerateWithConfig(text string, config Config) {
-	w := config.Writer
-	ww := config.WhiteWhiteChar
-	bb := config.BlackBlackChar
-	wb := config.WhiteBlackChar
-	bw := config.BlackWhiteChar
-	code, _ := qr.Encode(text, config.Level)
+func (c *Config) writeFullBlocks(w io.Writer, code *qr.Code) {
+	white := c.WhiteChar
+	black := c.BlackChar
+
+	// Frame the barcode in a 1 pixel border
+	w.Write([]byte(white))
+	for i := 0; i <= code.Size; i++ {
+		w.Write([]byte(white))
+	}
+	w.Write([]byte("\n"))
+	for i := 0; i <= code.Size; i++ {
+		w.Write([]byte(white))
+		for j := 0; j <= code.Size; j++ {
+			if code.Black(i, j) {
+				w.Write([]byte(black))
+			} else {
+				w.Write([]byte(white))
+			}
+		}
+		w.Write([]byte("\n"))
+	}
+}
+
+func (c *Config) writeHalfBlocks(w io.Writer, code *qr.Code) {
+	ww := c.WhiteChar
+	bb := c.BlackChar
+	wb := c.WhiteBlackChar
+	bw := c.BlackWhiteChar
 	// Frame the barcode in a 1 pixel border
 	w.Write([]byte(bw))
 	for i := 0; i <= code.Size; i++ {
@@ -63,15 +88,24 @@ func GenerateWithConfig(text string, config Config) {
 	}
 }
 
+// GenerateWithConfig expects a string to encode and a config
+func GenerateWithConfig(text string, config Config) {
+	w := config.Writer
+	code, _ := qr.Encode(text, config.Level)
+	if config.HalfBlocks {
+		config.writeHalfBlocks(w, code)
+	} else {
+		config.writeFullBlocks(w, code)
+	}
+}
+
 // Generate a QR Code and write it out to io.Writer
 func Generate(text string, l qr.Level, w io.Writer) {
 	config := Config{
-		Level:          l,
-		Writer:         w,
-		BlackBlackChar: BLACK_BLACK,
-		BlackWhiteChar: BLACK_WHITE,
-		WhiteWhiteChar: WHITE_WHITE,
-		WhiteBlackChar: WHITE_BLACK,
+		Level:     l,
+		Writer:    w,
+		BlackChar: BLACK,
+		WhiteChar: WHITE,
 	}
 	GenerateWithConfig(text, config)
 }
