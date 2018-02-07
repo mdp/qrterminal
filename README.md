@@ -4,7 +4,14 @@
 
 A golang library for generating QR codes in the terminal.
 
-Originally this was a port of the [NodeJS version](https://github.com/gtanner/qrcode-terminal). Recently it's be updated to allow for smaller code generation using ASCII 'half blocks'
+Originally this was a port of the [NodeJS version](https://github.com/gtanner/qrcode-terminal). Recently it's been updated to allow for smaller code generation using ASCII 'half blocks'
+
+## Example
+Full size ASCII block QR Code:  
+<img src="https://user-images.githubusercontent.com/2868/35941992-33974eec-0c22-11e8-867c-234d3d06f016.png" alt="alt text" width="200" height="200">
+
+Smaller 'half blocks' in the terminal:  
+<img src="https://user-images.githubusercontent.com/2868/35942180-d11b565e-0c22-11e8-8df9-481cd1b7e7b3.png" alt="alt text" width="200" height="200">
 
 ## Install
 
@@ -63,7 +70,7 @@ func main() {
 
 Credits:
 
-Mark Percival m@mdp.im
-[Matthew Kennerly](https://github.com/mtkennerly)
+Mark Percival m@mdp.im  
+[Matthew Kennerly](https://github.com/mtkennerly)  
 [Viric](https://github.com/viric)
 
