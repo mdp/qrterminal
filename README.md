@@ -27,13 +27,13 @@ import (
 
 func main() {
   // Generate a 'dense' qrcode with the 'Low' level error correction and write it to Stdout
-  qrterminal.GenerateHalfBlock("https://github.com/mdp/qrterminal", qrterminal.L, os.Stdout)
+  qrterminal.Generate("https://github.com/mdp/qrterminal", qrterminal.L, os.Stdout)
 }
 ```
 
 ### More complicated
 
-Large Inverted barcode with medium redundancy
+Large Inverted barcode with medium redundancy and a 1 pixel border
 ```go
 import (
     "github.com/mdp/qrterminal"
@@ -46,6 +46,7 @@ func main() {
       Writer: os.Stdout,
       BlackChar: qrterminal.WHITE,
       WhiteChar: qrterminal.BLACK,
+      QuietZone: 1,
   }
   qrterminal.GenerateWithConfig("https://github.com/mdp/qrterminal", config)
 }
@@ -72,5 +73,6 @@ Credits:
 
 Mark Percival m@mdp.im  
 [Matthew Kennerly](https://github.com/mtkennerly)  
-[Viric](https://github.com/viric)
-
+[Viric](https://github.com/viric)  
+[WindomZ](https://github.com/WindomZ)  
+[mattn](https://github.com/mattn)  

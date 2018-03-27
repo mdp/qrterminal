@@ -15,6 +15,7 @@ func TestGenerateWithConfig(t *testing.T) {
 		Writer:    os.Stdout,
 		BlackChar: WHITE, // Inverted
 		WhiteChar: BLACK,
+		QuietZone: QUIET_ZONE,
 	}
 	GenerateWithConfig("https://github.com/mdp/qrterminal", config)
 }
@@ -32,6 +33,7 @@ func TestGenerateWithHalfBlockConfig(t *testing.T) {
 		WhiteBlackChar: WHITE_BLACK,
 		WhiteChar:      WHITE_WHITE,
 		BlackWhiteChar: BLACK_WHITE,
+		QuietZone:      3,
 	}
 	GenerateWithConfig("https://github.com/mdp/qrterminal", config)
 }
