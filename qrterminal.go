@@ -44,7 +44,7 @@ func (c *Config) writeFullBlocks(w io.Writer, code *qr.Code) {
 	for i := 0; i <= code.Size; i++ {
 		w.Write([]byte(white))
 		for j := 0; j <= code.Size; j++ {
-			if code.Black(i, j) {
+			if code.Black(j, i) {
 				w.Write([]byte(black))
 			} else {
 				w.Write([]byte(white))
@@ -71,9 +71,9 @@ func (c *Config) writeHalfBlocks(w io.Writer, code *qr.Code) {
 		for j := 0; j <= code.Size; j++ {
 			next_black := false
 			if i+1 < code.Size {
-				next_black = code.Black(i+1, j)
+				next_black = code.Black(j, i+1)
 			}
-			curr_black := code.Black(i, j)
+			curr_black := code.Black(j, i)
 			if curr_black && next_black {
 				w.Write([]byte(bb))
 			} else if curr_black && !next_black {
