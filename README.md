@@ -8,10 +8,10 @@ Originally this was a port of the [NodeJS version](https://github.com/gtanner/qr
 
 ## Example
 Full size ASCII block QR Code:  
-<img src="https://user-images.githubusercontent.com/2868/35941992-33974eec-0c22-11e8-867c-234d3d06f016.png" alt="alt text" width="200" height="200">
+<img src="https://user-images.githubusercontent.com/2868/37992336-0ba06b56-31d1-11e8-9d32-5c6bb008dc74.png" alt="alt text" width="225" height="225">
 
 Smaller 'half blocks' in the terminal:  
-<img src="https://user-images.githubusercontent.com/2868/35942180-d11b565e-0c22-11e8-8df9-481cd1b7e7b3.png" alt="alt text" width="200" height="200">
+<img src="https://user-images.githubusercontent.com/2868/37992371-243d4238-31d1-11e8-92f8-e34a794b21af.png" alt="alt text" width="225" height="225">
 
 ## Install
 
