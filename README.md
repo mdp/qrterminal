@@ -69,7 +69,18 @@ func main() {
 }
 ```
 
-Credits:
+
+## Command Line
+
+#### Installation
+
+`go get -u github.com/mdp/qrterminal/cmd/qr`
+
+#### Usage
+
+`$GOPATH/bin/qr github.com/mdp/qrterminal`
+
+### Credits:
 
 Mark Percival m@mdp.im  
 [Matthew Kennerly](https://github.com/mtkennerly)  
