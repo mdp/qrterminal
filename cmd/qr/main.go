@@ -9,7 +9,7 @@ import (
 
 	"github.com/mattn/go-colorable"
 	"github.com/mdp/qrterminal"
-	"github.com/rsc/qr"
+	"rsc.io/qr"
 )
 
 var verboseFlag bool
