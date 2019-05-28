@@ -1,3 +1,7 @@
+## 2.0.1
+
+Add goreleaser and release to Homebrew and Github
+
 ## 2.0.0
 
 Add a command line tool and QuietZone around QRCode

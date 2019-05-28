@@ -17,6 +17,14 @@ Smaller 'half blocks' in the terminal:
 
 `go get github.com/mdp/qrterminal`
 
+## Install command line tool
+
+OSX: `brew install mdp/tap/qrterminal`
+
+Others: Download from the [releases page](https://github.com/mdp/qrterminal/releases)
+
+Docker: `docker run --rm mpercival/qrterminal:latest 'https://github.com/mdp/qrterminal'`
+
 ## Usage
 
 ```go
@@ -30,6 +38,14 @@ func main() {
   qrterminal.Generate("https://github.com/mdp/qrterminal", qrterminal.L, os.Stdout)
 }
 ```
+
+## Command line usage
+
+Print out a basic QR code in your terminal:  
+`qrterminal https://github.com/mdp/qrterminal`
+
+Using 'medium' error correction:  
+`qrterminal https://github.com/mdp/qrterminal -l M`
 
 ### More complicated
 
