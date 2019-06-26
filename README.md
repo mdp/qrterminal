@@ -15,6 +15,10 @@ Smaller 'half blocks' in the terminal:
 
 ## Install
 
+For command line usage [see below](https://github.com/mdp/qrterminal#command-line), or grab the binary from the [releases page](https://github.com/mdp/qrterminal/releases)
+
+As a library in an application
+
 `go get github.com/mdp/qrterminal`
 
 ## Usage
@@ -90,10 +94,10 @@ Using 'medium' error correction:
 
 Or just use Docker: `docker run --rm mpercival/qrterminal:latest 'https://github.com/mdp/qrterminal'`
 
-### Credits:
+### Contributors/Credits:
 
-Mark Percival m@mdp.im  
-[Matthew Kennerly](https://github.com/mtkennerly)  
-[Viric](https://github.com/viric)  
-[WindomZ](https://github.com/WindomZ)  
-[mattn](https://github.com/mattn)  
+- [Mark Percival](https://github.com/mdp)
+- [Matthew Kennerly](https://github.com/mtkennerly)  
+- [Viric](https://github.com/viric)  
+- [WindomZ](https://github.com/WindomZ)  
+- [mattn](https://github.com/mattn)  
