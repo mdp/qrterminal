@@ -1,6 +1,6 @@
 # QRCode Terminal
 
-[![Build Status](https://secure.travis-ci.org/mdp/qrterminal.png)](https://travis-ci.org/mdp/qrterminal)
+[![Build Status](https://api.travis-ci.org/mdp/qrterminal.svg)](https://travis-ci.org/mdp/qrterminal)
 
 A golang library for generating QR codes in the terminal.
 
