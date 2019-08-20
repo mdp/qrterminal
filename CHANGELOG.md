@@ -1,3 +1,7 @@
+## 3.0.0
+
+Adjust go.mod to include required version string
+
 ## 2.0.1
 
 Add goreleaser and release to Homebrew and Github
