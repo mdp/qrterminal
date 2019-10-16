@@ -69,7 +69,7 @@ func main() {
       Level: qrterminal.M,
       Writer: os.Stdout,
   }
-  qrterminal.Generate("https://github.com/mdp/qrterminal", config)
+  qrterminal.GenerateWithConfig("https://github.com/mdp/qrterminal", config)
 }
 ```
 
