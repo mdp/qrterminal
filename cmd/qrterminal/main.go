@@ -15,6 +15,7 @@ import (
 var verboseFlag bool
 var levelFlag string
 var quietZoneFlag int
+var halfBlocksFlag bool
 
 func getLevel(s string) qr.Level {
 	switch l := strings.ToLower(s); l {
@@ -33,6 +34,7 @@ func main() {
 	flag.BoolVar(&verboseFlag, "v", false, "Output debugging information")
 	flag.StringVar(&levelFlag, "l", "L", "Error correction level")
 	flag.IntVar(&quietZoneFlag, "q", 2, "Size of quietzone border")
+	flag.BoolVar(&halfBlocksFlag, "s", false, "Small output, using half-block characters")
 
 	flag.Parse()
 	level := getLevel(levelFlag)
@@ -49,22 +51,32 @@ func main() {
 	}
 
 	cfg := qrterminal.Config{
-		Level:     level,
-		Writer:    os.Stdout,
-		QuietZone: quietZoneFlag,
-		BlackChar: qrterminal.BLACK,
-		WhiteChar: qrterminal.WHITE,
+		Level:      level,
+		Writer:     os.Stdout,
+		QuietZone:  quietZoneFlag,
+		HalfBlocks: halfBlocksFlag,
+		BlackChar:  qrterminal.BLACK,
+		WhiteChar:  qrterminal.WHITE,
+	}
+
+	if halfBlocksFlag {
+		cfg.BlackChar = qrterminal.BLACK_BLACK
+		cfg.WhiteBlackChar = qrterminal.WHITE_BLACK
+		cfg.WhiteChar = qrterminal.WHITE_WHITE
+		cfg.BlackWhiteChar = qrterminal.BLACK_WHITE
 	}
 
 	if verboseFlag {
 		fmt.Fprintf(os.Stdout, "Level: %s \n", levelFlag)
 		fmt.Fprintf(os.Stdout, "Quietzone Border Size: %d \n", quietZoneFlag)
+		fmt.Fprintf(os.Stdout, "Small output: %t \n", halfBlocksFlag)
 		fmt.Fprintf(os.Stdout, "Encoded data: %s \n", strings.Join(flag.Args(), "\n"))
 		fmt.Println("")
 	}
 
 	if runtime.GOOS == "windows" {
 		cfg.Writer = colorable.NewColorableStdout()
+		cfg.HalfBlocks = false
 		cfg.BlackChar = qrterminal.BLACK
 		cfg.WhiteChar = qrterminal.WHITE
 	}
