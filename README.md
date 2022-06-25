@@ -10,8 +10,8 @@ Originally this was a port of the [NodeJS version](https://github.com/gtanner/qr
 Full size ASCII block QR Code:  
 <img src="https://user-images.githubusercontent.com/2868/37992336-0ba06b56-31d1-11e8-9d32-5c6bb008dc74.png" alt="alt text" width="225" height="225">
 
-Smaller 'half blocks' in the terminal:  
-<img src="https://user-images.githubusercontent.com/2868/37992371-243d4238-31d1-11e8-92f8-e34a794b21af.png" alt="alt text" width="225" height="225">
+Quads of smaller ascii 'half blocks' in the terminal:  
+<img src="https://user-images.githubusercontent.com/2868/37992336-0ba06b56-31d1-11e8-9d32-5c6bb008dc74.png" alt="alt text" width="112" height="112">
 
 ## Install
 
@@ -19,7 +19,9 @@ For command line usage [see below](https://github.com/mdp/qrterminal#command-lin
 
 As a library in an application
 
-`go get github.com/mdp/qrterminal/v3`
+```bash
+go get github.com/mdp/qrterminal/v3
+```
 
 ## Usage
 
@@ -27,11 +29,11 @@ As a library in an application
 import (
     "github.com/mdp/qrterminal/v3"
     "os"
-    )
+)
 
 func main() {
-  // Generate a 'dense' qrcode with the 'Low' level error correction and write it to Stdout
-  qrterminal.Generate("https://github.com/mdp/qrterminal", qrterminal.L, os.Stdout)
+    // Generate a 'dense' qrcode with the 'Low' level error correction and write it to Stdout
+    qrterminal.Generate("https://github.com/mdp/qrterminal", qrterminal.L, os.Stdout)
 }
 ```
 
