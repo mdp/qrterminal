@@ -1,3 +1,7 @@
+## 3.1.1
+
+- Update deps to latest
+
 ## 3.1.0
 
 - Add the ability to accept input string from stdin
