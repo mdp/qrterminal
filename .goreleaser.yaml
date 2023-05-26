@@ -64,6 +64,7 @@ brews:
   tap:
     owner: mdp
     name: homebrew-tap
+    token: "{{ .Env.GORELEASER_TOKEN_TAP }}"
   commit_author:
     name: mdp
     email: m@mdp.im

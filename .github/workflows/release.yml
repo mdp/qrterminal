@@ -46,3 +46,4 @@ jobs:
           args: release --timeout 50m
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_TOKEN_TAP: ${{ secrets.GORELEASER_TOKEN_TAP }}
