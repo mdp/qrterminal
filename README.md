@@ -84,6 +84,8 @@ Others: Download from the [releases page](https://github.com/mdp/qrterminal/rele
 
 Source: `go get -u github.com/mdp/qrterminal/v3/cmd/qrterminal`
 
+Docker: `docker pull ghcr.io/mdp/qrterminal:latest`
+
 #### Usage
 
 Print out a basic QR code in your terminal:  
@@ -93,6 +95,15 @@ Using 'medium' error correction:
 `qrterminal https://github.com/mdp/qrterminal -l M`
 
 Or just use Docker: `docker run --rm ghcr.io/mdp/qrterminal:latest 'https://github.com/mdp/qrterminal'`
+
+You can also pipe text via stdin
+
+`cat wireguard_peer.conf | qrterminal`
+
+or
+
+`cat wireguard_peer.conf | `docker run --rm -i ghcr.io/mdp/qrterminal:latest`
+
 
 ### Contributors/Credits:
 

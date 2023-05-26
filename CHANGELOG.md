@@ -2,6 +2,7 @@
 
 - Add the ability to accept input string from stdin
 - Integrate github actions for build and release
+- Release support for Darwin M1/M2(aarch64)
 
 ## 3.0.0
 
