@@ -1,6 +1,6 @@
 # QRCode Terminal
 
-[![Build Status](https://api.travis-ci.org/mdp/qrterminal.svg)](https://travis-ci.org/mdp/qrterminal)
+[![Build Status](https://github.com/mdp/qrterminal/actions/workflows/build.yml/badge.svg)](https://github.com/mdp/qrterminal/actions/workflows/build.yml)
 
 A golang library for generating QR codes in the terminal.
 
@@ -92,7 +92,7 @@ Print out a basic QR code in your terminal:
 Using 'medium' error correction:  
 `qrterminal https://github.com/mdp/qrterminal -l M`
 
-Or just use Docker: `docker run --rm mpercival/qrterminal:latest 'https://github.com/mdp/qrterminal'`
+Or just use Docker: `docker run --rm ghcr.io/mdp/qrterminal:latest 'https://github.com/mdp/qrterminal'`
 
 ### Contributors/Credits:
 

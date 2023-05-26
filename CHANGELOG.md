@@ -1,3 +1,8 @@
+## 3.1.0
+
+- Add the ability to accept input string from stdin
+- Integrate github actions for build and release
+
 ## 3.0.0
 
 Adjust go.mod to include required version string
