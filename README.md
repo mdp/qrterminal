@@ -92,7 +92,7 @@ Print out a basic QR code in your terminal:
 Using 'medium' error correction:  
 `qrterminal https://github.com/mdp/qrterminal -l M`
 
-Or just use Docker: `docker run --rm ghcr.io/mpercival/qrterminal:latest 'https://github.com/mdp/qrterminal'`
+Or just use Docker: `docker run --rm ghcr.io/mdp/qrterminal:latest 'https://github.com/mdp/qrterminal'`
 
 ### Contributors/Credits:
 
