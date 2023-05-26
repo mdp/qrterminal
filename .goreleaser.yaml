@@ -93,8 +93,6 @@ docker_manifests:
     image_templates:
       - ghcr.io/mdp/qrterminal:{{ .Tag }}-amd64
       - ghcr.io/mdp/qrterminal:{{ .Tag }}-arm64
-    # Skips can and shall be set for individual manifests same as in dockers
-    skip_push: auto
   - id: qrterminal-Tag
     name_template: ghcr.io/mdp/qrterminal:{{ .Tag }}
     image_templates:
