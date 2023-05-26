@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"runtime"
 	"strings"
@@ -36,12 +37,16 @@ func main() {
 
 	flag.Parse()
 	level := getLevel(levelFlag)
+	content := strings.Join(flag.Args(), " ")
 
-	if len(flag.Args()) < 1 {
-		fmt.Fprintf(os.Stderr, "usage of %s: \"[arguments]\"\n", os.Args[0])
-		fmt.Println("Options:")
-		flag.PrintDefaults()
-		os.Exit(1)
+	if len(content) < 1 {
+		// Get input from stdin until EOF
+		stdin, err := io.ReadAll(os.Stdin)
+
+		if err != nil {
+			panic(err)
+		}
+		content = string(stdin)
 	} else if level < 0 {
 		fmt.Fprintf(os.Stderr, "Invalid error correction level: %s\n", levelFlag)
 		fmt.Fprintf(os.Stderr, "Valid options are [L, M, H]\n")
@@ -69,5 +74,6 @@ func main() {
 		cfg.WhiteChar = qrterminal.WHITE
 	}
 
-	qrterminal.GenerateWithConfig(strings.Join(flag.Args(), "\n"), cfg)
+	fmt.Fprint(os.Stdout, "\n")
+	qrterminal.GenerateWithConfig(content, cfg)
 }
