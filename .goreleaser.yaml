@@ -86,6 +86,20 @@ dockers:
     build_flag_templates:
       - "--platform=linux/arm64"
 
+docker_manifests:
+  - id: qrterminal-latest
+    name_template: ghcr.io/mdp/qrterminal:latest
+    image_templates:
+      - ghcr.io/mdp/qrterminal:{{ .Tag }}-amd64
+      - ghcr.io/mdp/qrterminal:{{ .Tag }}-arm64
+    # Skips can and shall be set for individual manifests same as in dockers
+    skip_push: auto
+  - id: qrterminal-Tag
+    name_template: ghcr.io/mdp/qrterminal:{{ .Tag }}
+    image_templates:
+      - ghcr.io/mdp/qrterminal:{{ .Tag }}-amd64
+      - ghcr.io/mdp/qrterminal:{{ .Tag }}-arm64
+
 # The lines beneath this are called `modelines`. See `:help modeline`
 # Feel free to remove those if you don't want/use them.
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
