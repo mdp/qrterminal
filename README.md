@@ -102,7 +102,7 @@ You can also pipe text via stdin
 
 or
 
-`cat wireguard_peer.conf | `docker run --rm -i ghcr.io/mdp/qrterminal:latest`
+`cat wireguard_peer.conf | docker run --rm -i ghcr.io/mdp/qrterminal:latest`
 
 
 ### Contributors/Credits:
