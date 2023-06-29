@@ -82,7 +82,7 @@ OSX: `brew install mdp/tap/qrterminal`
 
 Others: Download from the [releases page](https://github.com/mdp/qrterminal/releases)
 
-Source: `go get -u github.com/mdp/qrterminal/v3/cmd/qrterminal`
+Source: `go install github.com/mdp/qrterminal/v3/cmd/qrterminal@latest`
 
 Docker: `docker pull ghcr.io/mdp/qrterminal:latest`
 
