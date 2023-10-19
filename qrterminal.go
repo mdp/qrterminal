@@ -32,6 +32,7 @@ const QUIET_ZONE = 4
 // Color 0: Black Color 1: White
 const SIXEL_BEGIN = "\x1bPq\n#0;2;0;0;0#1;2;100;100;100\n"
 const SIXEL_END = "\x1b\\"
+
 // Sixel Block Size, should be always greater than 6.
 const SIXEL_BLOCK_SIZE = 12
 
@@ -78,7 +79,7 @@ func IsSixelSupported(w io.Writer) bool {
 }
 
 func (c *Config) writeSixel(w io.Writer, code *qr.Code) {
-	line := SIXEL_BLOCK_SIZE/6
+	line := SIXEL_BLOCK_SIZE / 6
 	// Frame the barcode in a 1 pixel border
 	w.Write([]byte(SIXEL_BEGIN))
 	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), c.QuietZone*line))) // top border
@@ -117,7 +118,10 @@ func (c *Config) writeSixel(w io.Writer, code *qr.Code) {
 			w.Write(content.Bytes())
 		}
 	}
-	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), (c.QuietZone)*line))) // bottom border
+	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), (c.QuietZone-1)*line))) // bottom border
+	if c.QuietZone > 1 {
+		w.Write([]byte(fmt.Sprintf("#1!%d~-", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)))) // bottom border last line, Fix on iTerm2
+	}
 	defer w.Write([]byte(SIXEL_END))
 }
 
