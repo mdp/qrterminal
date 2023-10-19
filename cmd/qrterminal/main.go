@@ -60,7 +60,7 @@ func main() {
 		BlackChar: qrterminal.BLACK,
 		WhiteChar: qrterminal.WHITE,
 	}
-
+	cfg.WithSixel = qrterminal.IsSixelSupported(os.Stdout)
 	if verboseFlag {
 		fmt.Fprintf(os.Stdout, "Level: %s \n", levelFlag)
 		fmt.Fprintf(os.Stdout, "Quietzone Border Size: %d \n", quietZoneFlag)
