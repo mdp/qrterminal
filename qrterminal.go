@@ -117,7 +117,7 @@ func (c *Config) writeSixel(w io.Writer, code *qr.Code) {
 			w.Write(content.Bytes())
 		}
 	}
-	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), (c.QuietZone-1)*line))) // bottom border
+	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), (c.QuietZone)*line))) // bottom border
 	defer w.Write([]byte(SIXEL_END))
 }
 
