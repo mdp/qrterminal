@@ -1,9 +1,13 @@
 package qrterminal
 
 import (
+	"bytes"
+	"fmt"
 	"io"
+	"os"
 	"strings"
 
+	"golang.org/x/term"
 	"rsc.io/qr"
 )
 
@@ -24,7 +28,15 @@ const L = qr.L
 // default is 4-pixel-wide white quiet zone
 const QUIET_ZONE = 4
 
-//Config for generating a barcode
+// Sixel Support Control Sequence
+// Color 0: Black Color 1: White
+const SIXEL_BEGIN = "\x1bPq\n#0;2;0;0;0#1;2;100;100;100\n"
+const SIXEL_END = "\x1b\\"
+
+// Sixel Block Size, should be always greater than 6.
+const SIXEL_BLOCK_SIZE = 12
+
+// Config for generating a barcode
 type Config struct {
 	Level          qr.Level
 	Writer         io.Writer
@@ -34,6 +46,83 @@ type Config struct {
 	WhiteChar      string
 	WhiteBlackChar string
 	QuietZone      int
+	WithSixel      bool
+}
+
+func IsSixelSupported(w io.Writer) bool {
+	if w != os.Stdout {
+		return false
+	}
+	stdout := os.Stdout
+	if !term.IsTerminal(int(stdout.Fd())) {
+		return false
+	}
+	_, err := stdout.Write([]byte("\x1B[c"))
+	if err != nil {
+		return false
+	}
+	buf := make([]byte, 1024)
+	//set echo off
+	raw, err := term.MakeRaw(int(stdout.Fd()))
+	defer term.Restore(int(stdout.Fd()), raw)
+	_, err = stdout.Read(buf)
+	if err != nil {
+		return false
+	}
+	for _, b := range string(buf) {
+		if b == '4' {
+			//Found Sixel Support
+			return true
+		}
+	}
+	return false
+}
+
+func (c *Config) writeSixel(w io.Writer, code *qr.Code) {
+	line := SIXEL_BLOCK_SIZE / 6
+	// Frame the barcode in a 1 pixel border
+	w.Write([]byte(SIXEL_BEGIN))
+	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), c.QuietZone*line))) // top border
+	for i := 0; i <= code.Size; i++ {
+		flag := -1
+		repeat := 0
+		content := bytes.NewBufferString("")
+		if c.QuietZone > 0 {
+			content.WriteString(fmt.Sprintf("#1!%d~", SIXEL_BLOCK_SIZE*c.QuietZone)) // left border
+		}
+		for j := 0; j <= code.Size; j++ {
+			if code.Black(j, i) {
+				if flag == 1 {
+					content.WriteString(fmt.Sprintf("#1!%d~", SIXEL_BLOCK_SIZE*repeat))
+					repeat = 0
+				}
+				flag = 0
+				repeat++
+			} else {
+				if flag == 0 {
+					content.WriteString(fmt.Sprintf("#0!%d~", SIXEL_BLOCK_SIZE*repeat))
+					repeat = 0
+				}
+				flag = 1
+				repeat++
+			}
+		}
+		if repeat > 0 {
+			content.WriteString(fmt.Sprintf("#%d!%d~", flag, SIXEL_BLOCK_SIZE*repeat))
+		}
+		if c.QuietZone > 1 {
+			content.WriteString(fmt.Sprintf("#1!%d~", SIXEL_BLOCK_SIZE*(c.QuietZone-1))) // right border
+		}
+		content.WriteString("-\n")
+		for i := 0; i < line; i++ {
+			w.Write(content.Bytes())
+		}
+	}
+	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), (c.QuietZone-1)*line))) // bottom border
+	if c.QuietZone > 1 {
+		w.Write([]byte(fmt.Sprintf("#1!%d~-", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)))) // bottom border last line, Fix on iTerm2
+	}
+	defer w.Write([]byte(SIXEL_END))
 }
 
 func (c *Config) writeFullBlocks(w io.Writer, code *qr.Code) {
@@ -121,7 +210,11 @@ func GenerateWithConfig(text string, config Config) {
 	if config.HalfBlocks {
 		config.writeHalfBlocks(w, code)
 	} else {
-		config.writeFullBlocks(w, code)
+		if config.WithSixel {
+			config.writeSixel(w, code)
+		} else {
+			config.writeFullBlocks(w, code)
+		}
 	}
 }
 
@@ -134,6 +227,7 @@ func Generate(text string, l qr.Level, w io.Writer) {
 		WhiteChar: WHITE,
 		QuietZone: QUIET_ZONE,
 	}
+	config.WithSixel = IsSixelSupported(w)
 	GenerateWithConfig(text, config)
 }
 

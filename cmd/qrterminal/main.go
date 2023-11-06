@@ -16,6 +16,7 @@ import (
 var verboseFlag bool
 var levelFlag string
 var quietZoneFlag int
+var sixelDisableFlag bool
 
 func getLevel(s string) qr.Level {
 	switch l := strings.ToLower(s); l {
@@ -34,6 +35,7 @@ func main() {
 	flag.BoolVar(&verboseFlag, "v", false, "Output debugging information")
 	flag.StringVar(&levelFlag, "l", "L", "Error correction level")
 	flag.IntVar(&quietZoneFlag, "q", 2, "Size of quietzone border")
+	flag.BoolVar(&sixelDisableFlag, "s", false, "disable sixel format for output")
 
 	flag.Parse()
 	level := getLevel(levelFlag)
@@ -60,7 +62,9 @@ func main() {
 		BlackChar: qrterminal.BLACK,
 		WhiteChar: qrterminal.WHITE,
 	}
-
+	if !sixelDisableFlag {
+		cfg.WithSixel = qrterminal.IsSixelSupported(os.Stdout)
+	}
 	if verboseFlag {
 		fmt.Fprintf(os.Stdout, "Level: %s \n", levelFlag)
 		fmt.Fprintf(os.Stdout, "Quietzone Border Size: %d \n", quietZoneFlag)
