@@ -1,3 +1,8 @@
+## 3.2.0
+
+- Update to add sixel support #29
+- Update deps to latest
+
 ## 3.1.1
 
 - Update deps to latest
