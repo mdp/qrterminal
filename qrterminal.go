@@ -79,28 +79,32 @@ func IsSixelSupported(w io.Writer) bool {
 }
 
 func (c *Config) writeSixel(w io.Writer, code *qr.Code) {
-	line := SIXEL_BLOCK_SIZE / 6
+	size := SIXEL_BLOCK_SIZE
+	if code.Size > 50 {
+		size /= 2
+	}
+	line := size / 6
 	// Frame the barcode in a 1 pixel border
 	w.Write([]byte(SIXEL_BEGIN))
-	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), c.QuietZone*line))) // top border
+	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", size*(code.Size+c.QuietZone*2)), c.QuietZone*line))) // top border
 	for i := 0; i <= code.Size; i++ {
 		flag := -1
 		repeat := 0
 		content := bytes.NewBufferString("")
 		if c.QuietZone > 0 {
-			content.WriteString(fmt.Sprintf("#1!%d~", SIXEL_BLOCK_SIZE*c.QuietZone)) // left border
+			content.WriteString(fmt.Sprintf("#1!%d~", size*c.QuietZone)) // left border
 		}
 		for j := 0; j <= code.Size; j++ {
 			if code.Black(j, i) {
 				if flag == 1 {
-					content.WriteString(fmt.Sprintf("#1!%d~", SIXEL_BLOCK_SIZE*repeat))
+					content.WriteString(fmt.Sprintf("#1!%d~", size*repeat))
 					repeat = 0
 				}
 				flag = 0
 				repeat++
 			} else {
 				if flag == 0 {
-					content.WriteString(fmt.Sprintf("#0!%d~", SIXEL_BLOCK_SIZE*repeat))
+					content.WriteString(fmt.Sprintf("#0!%d~", size*repeat))
 					repeat = 0
 				}
 				flag = 1
@@ -108,19 +112,19 @@ func (c *Config) writeSixel(w io.Writer, code *qr.Code) {
 			}
 		}
 		if repeat > 0 {
-			content.WriteString(fmt.Sprintf("#%d!%d~", flag, SIXEL_BLOCK_SIZE*repeat))
+			content.WriteString(fmt.Sprintf("#%d!%d~", flag, size*repeat))
 		}
 		if c.QuietZone > 1 {
-			content.WriteString(fmt.Sprintf("#1!%d~", SIXEL_BLOCK_SIZE*(c.QuietZone-1))) // right border
+			content.WriteString(fmt.Sprintf("#1!%d~", size*(c.QuietZone-1))) // right border
 		}
 		content.WriteString("-\n")
 		for i := 0; i < line; i++ {
 			w.Write(content.Bytes())
 		}
 	}
-	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)), (c.QuietZone-1)*line))) // bottom border
+	w.Write([]byte(stringRepeat(fmt.Sprintf("#1!%d~-\n", size*(code.Size+c.QuietZone*2)), (c.QuietZone-1)*line))) // bottom border
 	if c.QuietZone > 1 {
-		w.Write([]byte(fmt.Sprintf("#1!%d~-", SIXEL_BLOCK_SIZE*(code.Size+c.QuietZone*2)))) // bottom border last line, Fix on iTerm2
+		w.Write([]byte(fmt.Sprintf("#1!%d~-", size*(code.Size+c.QuietZone*2)))) // bottom border last line, Fix on iTerm2
 	}
 	defer w.Write([]byte(SIXEL_END))
 }
