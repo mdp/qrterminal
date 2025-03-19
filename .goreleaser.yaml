@@ -1,36 +1,33 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
+
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+
 before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod tidy
     # you may remove this if you don't need go generate
     - go generate ./...
-release:
-  github:
-    owner: mdp
-    name: qrterminal
-  draft: false
-  # If set to auto, will mark the release as not ready for production
-  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
-  # If set to true, will mark the release as not ready for production.
-  # Default is false.
-  prerelease: auto
 
 builds:
--
-  main: ./cmd/qrterminal/main.go
-  binary: qrterminal
-  env:
-    - CGO_ENABLED=0
-  goos:
-    - linux
-    - windows
-    - darwin
+  - main: ./cmd/qrterminal/main.go
+    binary: qrterminal
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
 
 archives:
-  - format: tar.gz
-    # this name template makes the OS and Arch compatible with the results of uname.
+  - formats: [tar.gz]
+    # this name template makes the OS and Arch compatible with the results of `uname`.
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -40,36 +37,50 @@ archives:
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     # use zip for windows archives
     format_overrides:
-    - goos: windows
-      format: zip
+      - goos: windows
+        formats: [zip]
     files:
       - LICENSE
       - README.md
       - CHANGELOG.md
     rlcp: true
+
 checksum:
   name_template: 'checksums.txt'
+
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
+
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
+
+release:
+  github:
+    owner: mdp
+    name: qrterminal
+  draft: false
+  prerelease: auto
+  footer: >-
+
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
 
 brews:
--
-  name: qrterminal
-  tap:
-    owner: mdp
-    name: homebrew-tap
-    token: "{{ .Env.GORELEASER_TOKEN_TAP }}"
-  commit_author:
-    name: mdp
-    email: m@mdp.im
-  homepage: https://github.com/mdp/qrterminal
-  description: 'Create and display QR codes on the command line'
+  - name: qrterminal
+    tap:
+      owner: mdp
+      name: homebrew-tap
+      token: "{{ .Env.GORELEASER_TOKEN_TAP }}"
+    commit_author:
+      name: mdp
+      email: m@mdp.im
+    homepage: https://github.com/mdp/qrterminal
+    description: 'Create and display QR codes on the command line'
 
 dockers:
   - image_templates:
@@ -99,8 +110,3 @@ docker_manifests:
     image_templates:
       - ghcr.io/mdp/qrterminal:{{ .Tag }}-amd64
       - ghcr.io/mdp/qrterminal:{{ .Tag }}-arm64
-
-# The lines beneath this are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/use them.
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
