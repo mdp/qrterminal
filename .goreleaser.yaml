@@ -43,7 +43,6 @@ archives:
       - LICENSE
       - README.md
       - CHANGELOG.md
-    rlcp: true
 
 checksum:
   name_template: 'checksums.txt'
@@ -72,7 +71,7 @@ release:
 
 brews:
   - name: qrterminal
-    tap:
+    repository:
       owner: mdp
       name: homebrew-tap
       token: "{{ .Env.GORELEASER_TOKEN_TAP }}"
