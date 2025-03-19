@@ -1,3 +1,7 @@
+## 3.2.1
+
+- Fix #33 - Default config to standard characters if not specified.
+
 ## 3.2.0
 
 - Update to add sixel support #29

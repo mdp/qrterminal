@@ -211,14 +211,27 @@ func GenerateWithConfig(text string, config Config) {
 	}
 	w := config.Writer
 	code, _ := qr.Encode(text, config.Level)
+
+	// Set default values for characters if not provided
+	if config.BlackChar == "" {
+		config.BlackChar = BLACK_BLACK
+	}
+	if config.WhiteBlackChar == "" {
+		config.WhiteBlackChar = WHITE_BLACK
+	}
+	if config.WhiteChar == "" {
+		config.WhiteChar = WHITE_WHITE
+	}
+	if config.BlackWhiteChar == "" {
+		config.BlackWhiteChar = BLACK_WHITE
+	}
+
 	if config.HalfBlocks {
 		config.writeHalfBlocks(w, code)
+	} else if config.WithSixel {
+		config.writeSixel(w, code)
 	} else {
-		if config.WithSixel {
-			config.writeSixel(w, code)
-		} else {
-			config.writeFullBlocks(w, code)
-		}
+		config.writeFullBlocks(w, code)
 	}
 }
 
