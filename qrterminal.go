@@ -64,6 +64,9 @@ func IsSixelSupported(w io.Writer) bool {
 	buf := make([]byte, 1024)
 	//set echo off
 	raw, err := term.MakeRaw(int(stdout.Fd()))
+	if err != nil {
+		return false
+	}
 	defer term.Restore(int(stdout.Fd()), raw)
 	_, err = stdout.Read(buf)
 	if err != nil {
