@@ -2,10 +2,12 @@ package qrterminal
 
 import (
 	"bytes"
+	"errors"
 	"os"
 	"strings"
 	"testing"
 
+	"golang.org/x/term"
 	"rsc.io/qr"
 )
 
@@ -45,10 +47,10 @@ func TestGenerateWithHalfBlockConfig(t *testing.T) {
 
 func TestGenerateWithHalfBlockMinConfig(t *testing.T) {
 	config := Config{
-		Level:          M,
-		Writer:         os.Stdout,
-		HalfBlocks:     true,
-		QuietZone:      3,
+		Level:      M,
+		Writer:     os.Stdout,
+		HalfBlocks: true,
+		QuietZone:  3,
 	}
 	GenerateWithConfig("https://github.com/mdp/qrterminal", config)
 }
@@ -71,7 +73,7 @@ func TestCaptureOutput(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			
+
 			if tc.halfBlocks {
 				config := Config{
 					Level:      tc.level,
@@ -82,33 +84,33 @@ func TestCaptureOutput(t *testing.T) {
 			} else {
 				Generate(tc.input, tc.level, &buf)
 			}
-			
+
 			output := buf.String()
-			
+
 			// Verify output is not empty
 			if len(output) == 0 {
 				t.Errorf("Generated QR code is empty")
 			}
-			
+
 			// Verify output contains multiple lines
 			lines := strings.Split(output, "\n")
 			if len(lines) <= 1 {
 				t.Errorf("Generated QR code should have multiple lines, got %d", len(lines))
 			}
-			
+
 			// Verify the output contains the expected characters
 			if tc.halfBlocks {
 				// Half blocks mode should contain these characters
 				expectedChars := []string{BLACK_BLACK, WHITE_WHITE, BLACK_WHITE, WHITE_BLACK}
 				foundExpectedChar := false
-				
+
 				for _, char := range expectedChars {
 					if strings.Contains(output, char) {
 						foundExpectedChar = true
 						break
 					}
 				}
-				
+
 				if !foundExpectedChar {
 					t.Errorf("Half block output doesn't contain expected characters")
 				}
@@ -145,22 +147,22 @@ func TestQRStructure(t *testing.T) {
 				QuietZone: tc.quietZone,
 			}
 			GenerateWithConfig(tc.input, config)
-			
+
 			output := buf.String()
 			lines := strings.Split(output, "\n")
-			
+
 			// Check that we have at least 2*quietZone lines for top and bottom borders
 			if len(lines) < 2*tc.quietZone {
 				t.Errorf("Expected at least %d lines for quiet zone, got %d", 2*tc.quietZone, len(lines))
 			}
-			
+
 			// Check that the first few lines contain WHITE (quiet zone)
 			for i := 0; i < tc.quietZone && i < len(lines); i++ {
 				if len(lines[i]) > 0 && !strings.Contains(lines[i], WHITE) {
 					t.Errorf("Line %d should contain WHITE (quiet zone)", i)
 				}
 			}
-			
+
 			// Check that the last few lines are all WHITE (quiet zone)
 			// Note: The last line might be empty due to a trailing newline
 			for i := len(lines) - tc.quietZone; i < len(lines); i++ {
@@ -216,14 +218,14 @@ func TestConfigVariations(t *testing.T) {
 			var buf bytes.Buffer
 			tc.config.Writer = &buf
 			GenerateWithConfig(tc.input, tc.config)
-			
+
 			output := buf.String()
-			
+
 			// Verify output is not empty
 			if len(output) == 0 {
 				t.Errorf("Generated QR code is empty")
 			}
-			
+
 			// For custom characters, verify they appear in the output
 			if tc.name == "CustomCharacters" {
 				if !strings.Contains(output, "XX") || !strings.Contains(output, "..") {
@@ -233,14 +235,14 @@ func TestConfigVariations(t *testing.T) {
 				// Check for at least one of the custom characters
 				customChars := []string{"a", "b", "c", "d"}
 				foundCustomChar := false
-				
+
 				for _, char := range customChars {
 					if strings.Contains(output, char) {
 						foundCustomChar = true
 						break
 					}
 				}
-				
+
 				if !foundCustomChar {
 					t.Errorf("Output doesn't contain custom half block characters")
 				}
@@ -264,17 +266,17 @@ func TestEdgeCases(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			var buf bytes.Buffer
-			
+
 			// Test that it doesn't panic
 			Generate(tc.input, L, &buf)
-			
+
 			output := buf.String()
-			
+
 			// Verify output is not empty (unless input is empty)
 			if tc.input != "" && len(output) == 0 {
 				t.Errorf("Generated QR code is empty for input: %s", tc.input)
 			}
-			
+
 			// For empty string, we should still get some output (the QR code for an empty string)
 			if tc.input == "" && len(output) == 0 {
 				t.Errorf("Generated QR code for empty string should not be empty")
@@ -286,15 +288,15 @@ func TestEdgeCases(t *testing.T) {
 // Test that the same input always produces the same output
 func TestConsistentOutput(t *testing.T) {
 	input := "https://github.com/mdp/qrterminal"
-	
+
 	var buf1 bytes.Buffer
 	Generate(input, L, &buf1)
 	output1 := buf1.String()
-	
+
 	var buf2 bytes.Buffer
 	Generate(input, L, &buf2)
 	output2 := buf2.String()
-	
+
 	if output1 != output2 {
 		t.Errorf("Generated QR codes for the same input should be identical")
 	}
@@ -303,19 +305,19 @@ func TestConsistentOutput(t *testing.T) {
 // Test that different error correction levels produce different outputs
 func TestErrorCorrectionLevels(t *testing.T) {
 	input := "https://github.com/mdp/qrterminal"
-	
+
 	var bufL bytes.Buffer
 	Generate(input, L, &bufL)
 	outputL := bufL.String()
-	
+
 	var bufM bytes.Buffer
 	Generate(input, M, &bufM)
 	outputM := bufM.String()
-	
+
 	var bufH bytes.Buffer
 	Generate(input, H, &bufH)
 	outputH := bufH.String()
-	
+
 	// Different error correction levels should produce different outputs
 	// (higher levels add more redundancy, changing the pattern)
 	if outputL == outputM || outputL == outputH || outputM == outputH {
@@ -328,7 +330,7 @@ func TestSixelDetection(t *testing.T) {
 	// This is a simple test that just ensures the function doesn't crash
 	// We can't really test the actual detection without a terminal
 	result := IsSixelSupported(os.Stdout)
-	
+
 	// The result could be true or false depending on the terminal
 	// We just want to make sure it runs without error
 	t.Logf("Sixel support detected: %v", result)
@@ -338,33 +340,91 @@ func TestSixelDetection(t *testing.T) {
 func TestQRPattern(t *testing.T) {
 	// Generate a QR code with a known input
 	input := "test"
-	
+
 	var buf bytes.Buffer
 	Generate(input, L, &buf)
 	output := buf.String()
-	
+
 	// Split the output into lines
 	lines := strings.Split(output, "\n")
-	
+
 	// Skip the quiet zone at the top
 	contentStart := QUIET_ZONE
-	
+
 	// Check for the finder patterns (the three square patterns in the corners)
 	// These are a key part of any QR code and should be present
-	
+
 	// The exact position depends on the QR code size, but we can check for patterns
 	// that should be present in any valid QR code for our input
-	
+
 	// Check for some BLACK pixels in the content area (not just quiet zone)
 	foundBlack := false
-	for i := contentStart; i < len(lines) - QUIET_ZONE; i++ {
+	for i := contentStart; i < len(lines)-QUIET_ZONE; i++ {
 		if strings.Contains(lines[i], BLACK) {
 			foundBlack = true
 			break
 		}
 	}
-	
+
 	if !foundBlack {
 		t.Errorf("QR code doesn't contain any BLACK pixels in the content area")
+	}
+}
+
+func TestIsSixelSupported_MakeRawFailure(t *testing.T) {
+	oldIsTerminal := isTerminal
+	oldMakeRaw := makeRaw
+	oldRestore := restore
+
+	t.Cleanup(func() {
+		isTerminal = oldIsTerminal
+		makeRaw = oldMakeRaw
+		restore = oldRestore
+	})
+
+	isTerminal = func(int) bool {
+		return true
+	}
+
+	makeRaw = func(int) (*term.State, error) {
+		return nil, errors.New("terminal state unavailable")
+	}
+
+	restore = func(int, *term.State) error {
+		t.Fatal("restore must not be called after MakeRaw failed")
+		return nil
+	}
+
+	if got := IsSixelSupported(os.Stdout); got {
+		t.Fatal("expected Sixel to be unsupported")
+	}
+}
+
+func TestIsSixelSupported_MakeRawNil(t *testing.T) {
+	oldIsTerminal := isTerminal
+	oldMakeRaw := makeRaw
+	oldRestore := restore
+
+	t.Cleanup(func() {
+		isTerminal = oldIsTerminal
+		makeRaw = oldMakeRaw
+		restore = oldRestore
+	})
+
+	isTerminal = func(int) bool {
+		return true
+	}
+
+	makeRaw = func(int) (*term.State, error) {
+		return nil, nil
+	}
+
+	restore = func(int, *term.State) error {
+		t.Fatal("restore must not be called after MakeRaw failed")
+		return nil
+	}
+
+	if got := IsSixelSupported(os.Stdout); got {
+		t.Fatal("expected Sixel to be unsupported")
 	}
 }
