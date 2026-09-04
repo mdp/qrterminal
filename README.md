@@ -1,6 +1,6 @@
 # QRCode Terminal
 
-[![Build Status](https://github.com/mdp/qrterminal/actions/workflows/build.yml/badge.svg)](https://github.com/mdp/qrterminal/actions/workflows/build.yml)
+[![CI](https://github.com/mdp/qrterminal/actions/workflows/ci.yml/badge.svg)](https://github.com/mdp/qrterminal/actions/workflows/ci.yml)
 
 A golang library for generating QR codes in the terminal.
 
