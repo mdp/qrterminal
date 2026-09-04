@@ -1,4 +1,4 @@
-module github.com/mdp/qrterminal/v3
+module github.com/mdp/qrterminal/v4
 
 go 1.25.0
 

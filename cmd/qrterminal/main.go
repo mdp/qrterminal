@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/mattn/go-colorable"
-	"github.com/mdp/qrterminal/v3"
+	"github.com/mdp/qrterminal/v4"
 	"rsc.io/qr"
 )
 
