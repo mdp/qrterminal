@@ -325,6 +325,91 @@ func TestErrorCorrectionLevels(t *testing.T) {
 	}
 }
 
+// Regression test for #38: QuietZone 0 must disable the border entirely.
+func TestQuietZoneZero(t *testing.T) {
+	testCases := []struct {
+		name   string
+		config Config
+	}{
+		{"FullBlocks", Config{Level: L}},
+		{"HalfBlocks", Config{Level: L, HalfBlocks: true}},
+		{
+			"HalfBlocksInverted",
+			Config{
+				Level:          L,
+				HalfBlocks:     true,
+				BlackChar:      WHITE_WHITE,
+				WhiteChar:      BLACK_BLACK,
+				BlackWhiteChar: WHITE_BLACK,
+				WhiteBlackChar: BLACK_WHITE,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			tc.config.Writer = &buf
+			tc.config.QuietZone = 0
+			GenerateWithConfig("test", tc.config)
+
+			output := buf.String()
+			if len(output) == 0 {
+				t.Fatal("Generated QR code is empty")
+			}
+
+			lines := strings.Split(output, "\n")
+			// With no quiet zone, the first line of output is QR data, not
+			// an all-white border row.
+			first := lines[0]
+			if strings.Trim(first, " ") == "" {
+				t.Errorf("first line is blank; expected QR data with no border")
+			}
+			if tc.name == "FullBlocks" && strings.Contains(first, WHITE) && !strings.Contains(first, BLACK) {
+				t.Errorf("first line looks like a quiet zone border: %q", first)
+			}
+		})
+	}
+}
+
+// Regression test for #39: with HalfBlocks and an inverted palette, the
+// quiet zone border must not emit solid bands of transition characters.
+func TestHalfBlocksInvertedNoBorderBands(t *testing.T) {
+	for _, quietZone := range []int{5, 8} {
+		var buf bytes.Buffer
+		config := Config{
+			Level:          L,
+			Writer:         &buf,
+			HalfBlocks:     true,
+			QuietZone:      quietZone,
+			BlackChar:      WHITE_WHITE,
+			WhiteChar:      BLACK_BLACK,
+			BlackWhiteChar: WHITE_BLACK,
+			WhiteBlackChar: BLACK_WHITE,
+		}
+		GenerateWithConfig("Hello World", config)
+
+		lines := strings.Split(buf.String(), "\n")
+		if len(lines) < quietZone*2 {
+			t.Fatalf("QZ=%d: expected at least %d lines", quietZone, quietZone*2)
+		}
+		// In this inverted palette the quiet zone renders as spaces, so
+		// border rows must not contain any filled block characters.
+		for _, idx := range []int{0, 1, len(lines) - 2, len(lines) - 3} {
+			if idx < 0 || idx >= len(lines) {
+				continue
+			}
+			line := lines[idx]
+			if line == "" {
+				continue
+			}
+			if strings.Contains(line, WHITE_WHITE) || strings.Contains(line, WHITE_BLACK) || strings.Contains(line, BLACK_WHITE) {
+				t.Errorf("QZ=%d: border line %d contains filled blocks: %q", quietZone, idx, line)
+			}
+		}
+	}
+}
+
 // Test that the sixel detection function works
 func TestSixelDetection(t *testing.T) {
 	// This is a simple test that just ensures the function doesn't crash
