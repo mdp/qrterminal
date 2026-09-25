@@ -16,7 +16,7 @@ import (
 var verboseFlag bool
 var levelFlag string
 var quietZoneFlag int
-var sixelDisableFlag bool
+var sixelFlag bool
 
 func getLevel(s string) qr.Level {
 	switch l := strings.ToLower(s); l {
@@ -35,7 +35,31 @@ func main() {
 	flag.BoolVar(&verboseFlag, "v", false, "Output debugging information")
 	flag.StringVar(&levelFlag, "l", "L", "Error correction level")
 	flag.IntVar(&quietZoneFlag, "q", 2, "Size of quietzone border")
-	flag.BoolVar(&sixelDisableFlag, "s", false, "disable sixel format for output")
+	flag.BoolVar(&sixelFlag, "sixel", false, "enable sixel format for output (opt-in)")
+
+	// Allow flags to appear before, after, or between operands, e.g.
+	// `qrterminal "hello" -q 5`. Go's flag package normally stops parsing at
+	// the first non-flag argument, so reorder: flags first, operands last.
+	// Flags that take a value are consumed with their value.
+	valueFlags := map[string]bool{"l": true, "q": true}
+	var flags, operands []string
+	args := os.Args[1:]
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		if strings.HasPrefix(arg, "-") && arg != "-" && arg != "--" {
+			name := strings.TrimLeft(arg, "-")
+			flags = append(flags, arg)
+			// `--flag=value` or boolean flags carry their value already;
+			// otherwise the next argument is this flag's value.
+			if valueFlags[name] && !strings.Contains(arg, "=") && i+1 < len(args) {
+				i++
+				flags = append(flags, args[i])
+			}
+		} else {
+			operands = append(operands, arg)
+		}
+	}
+	os.Args = append(os.Args[:1], append(flags, operands...)...)
 
 	flag.Parse()
 	level := getLevel(levelFlag)
@@ -62,7 +86,7 @@ func main() {
 		BlackChar: qrterminal.BLACK,
 		WhiteChar: qrterminal.WHITE,
 	}
-	if !sixelDisableFlag {
+	if sixelFlag {
 		cfg.WithSixel = qrterminal.IsSixelSupported(os.Stdout)
 	}
 	if verboseFlag {
