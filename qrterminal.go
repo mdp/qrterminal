@@ -154,22 +154,23 @@ func (c *Config) writeFullBlocks(w io.Writer, code *qr.Code) {
 	white := c.WhiteChar
 	black := c.BlackChar
 
-	// Frame the barcode in a 1 pixel border
+	// Frame the barcode in a quiet zone border. code is Size x Size; iterate
+	// over exactly Size rows and columns (no phantom row/column).
 	w.Write([]byte(stringRepeat(stringRepeat(white,
 		code.Size+c.QuietZone*2)+"\n", c.QuietZone))) // top border
-	for i := 0; i <= code.Size; i++ {
+	for i := 0; i < code.Size; i++ {
 		w.Write([]byte(stringRepeat(white, c.QuietZone))) // left border
-		for j := 0; j <= code.Size; j++ {
+		for j := 0; j < code.Size; j++ {
 			if code.Black(j, i) {
 				w.Write([]byte(black))
 			} else {
 				w.Write([]byte(white))
 			}
 		}
-		w.Write([]byte(stringRepeat(white, c.QuietZone-1) + "\n")) // right border
+		w.Write([]byte(stringRepeat(white, c.QuietZone) + "\n")) // right border
 	}
 	w.Write([]byte(stringRepeat(stringRepeat(white,
-		code.Size+c.QuietZone*2)+"\n", c.QuietZone-1))) // bottom border
+		code.Size+c.QuietZone*2)+"\n", c.QuietZone))) // bottom border
 }
 
 func (c *Config) writeHalfBlocks(w io.Writer, code *qr.Code) {
@@ -185,9 +186,9 @@ func (c *Config) writeHalfBlocks(w io.Writer, code *qr.Code) {
 	border := stringRepeat(ww, code.Size+c.QuietZone*2) + "\n"
 	// top border
 	w.Write([]byte(stringRepeat(border, rows)))
-	for i := 0; i <= code.Size; i += 2 {
+	for i := 0; i < code.Size; i += 2 {
 		w.Write([]byte(stringRepeat(ww, c.QuietZone))) // left border
-		for j := 0; j <= code.Size; j++ {
+		for j := 0; j < code.Size; j++ {
 			next_black := false
 			if i+1 < code.Size {
 				next_black = code.Black(j, i+1)
@@ -203,7 +204,7 @@ func (c *Config) writeHalfBlocks(w io.Writer, code *qr.Code) {
 				w.Write([]byte(wb))
 			}
 		}
-		w.Write([]byte(stringRepeat(ww, c.QuietZone-1) + "\n")) // right border
+		w.Write([]byte(stringRepeat(ww, c.QuietZone) + "\n")) // right border
 	}
 	// bottom border
 	w.Write([]byte(stringRepeat(border, rows)))

@@ -7,6 +7,7 @@
 - Sixel is now opt-in rather than the default: `Generate` no longer auto-detects sixel support, and the CLI enables it with `-sixel` instead of disabling it with `-s`. Set `Config.WithSixel` (e.g. via `IsSixelSupported`) explicitly if you want sixel output.
 - `Config.QuietZone` of `0` now disables the border entirely; only negative values are clamped to the default border of 1 (#38). Note this means an unset `QuietZone` (Go zero value `0`) now produces no border — set it explicitly if you want one.
 - Fixed stray bands of half-block transition characters (`▀`/`▄`) rendered along the top or bottom of the quiet zone when using `HalfBlocks` with an inverted/custom palette (#39). Border rows now always use the configured white character.
+- Fixed an off-by-one in block rendering: one extra white row and column were drawn around every code (hidden inside the right/bottom border). With `QuietZone: 0` this showed up as an unavoidable border on the bottom and right. Output is now exactly `Size + 2*QuietZone` square.
 
 - Reworked Sixel terminal-state handling so it works correctly with newer `golang.org/x/term` versions and reliably restores the terminal on exit (#40, fixed by @wackerm)
 - Fixed a nil-pointer panic in `IsSixelSupported` on Windows Terminal / Git Bash caused by an unhandled `term.MakeRaw` error (#35, fixed by @cbednarski; incorporated into the rewritten handler above)
